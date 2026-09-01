@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: spring-feign-saga-demo
+  datasource:
+    url: ${ORACLE_URL:jdbc:oracle:thin:@//localhost:1521/FREEPDB1}
+    username: ${ORACLE_USERNAME:saga_demo}
+    password: ${ORACLE_PASSWORD:saga_demo}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 2
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 2000
+            read-timeout: 5000
+
+server:
+  port: ${SERVER_PORT:8080}
+
+demo:
+  remote-base-url: ${REMOTE_BASE_URL:http://localhost:${server.port}}
+
+saga:
+  compensation:
+    suffix: /compensation
+    poll-delay-ms: 5000
+    batch-size: 20
+    lock-timeout-seconds: 120
+    max-retries: 8
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    io.github.hburaksavas.sagademo: INFO
